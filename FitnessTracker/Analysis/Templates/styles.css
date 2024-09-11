@@ -1,0 +1,26 @@
+body {
+    height: 90vh;
+    background-color: rgb(239, 237, 237);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container {
+    width: 700px;
+    display: flex;
+}
+
+.small-column {
+    width: 40px;
+}
+
+.large-column {
+    max-width: 700px;
+    overflow-x: scroll;
+}
+
+.container {
+    width: calc(1000px - 40px);
+    height: 500px;
+}

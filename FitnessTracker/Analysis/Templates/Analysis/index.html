@@ -1,52 +1,99 @@
 {% extends 'Analysis/layout.html' %}
 
 {% block body %}
-<h1>My Beautiful Chart</h1>
+
 
 
 <script>
     // JavaScript to render the chart
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('myChart').getContext('2d');
+
+        const dateDataPoints = {{ date_data_points| safe }};
+        const qtyDataPoints = {{ qty_data_points| safe }};
+
+        // Filter data: Use null for quantities below 5, so there will be space in the graph
+        const filteredQuantities = qtyDataPoints.map((qty) => {
+        return qty >= 5 ? qty : null;  // Set to null if qty < 5
+        });
+
+        const ctx = document.getElementById('myChart');
         const myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ date_data_points | safe }},
-        datasets: [{
-            label: 'VO2 Max Readings',
-            data: {{ qty_data_points | safe }},
-        backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)',
-            'rgba(255, 159, 64, 0.2)',
-            'rgba(201, 203, 207, 0.2)'
-        ],
-        borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)',
-            'rgba(255, 159, 64, 1)',
-            'rgba(201, 203, 207, 1)'
-        ],
-        borderWidth: 1
+                labels: dateDataPoints,  // Use filtered dates
+                datasets: [{
+                    label: 'Filtered VO2 Max Readings',
+                    data: filteredQuantities,  // Use filtered quantities
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
                 }]
             },
         options: {
-        scales: {
-            y: {
-                beginAtZero: false
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 11
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    ticks: {
+                        display: false
+                    },
+                    border: {
+                        display: false
+                    }
+                }
             }
-        }
-    }
-        });
-    });
-    console.log(Chart);  // This should output the Chart.js object to the console if it’s loaded correctly
+        }})
+        
+        const ctx2 = document.getElementById('mySecondChart');
+        const mySecondChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    data: filteredQuantities,  // Use filtered quantities
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+        options: {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    bottom: 36
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        display: false
+                    },
+                    gridlines: {
+                        display: false
+                    }                
+                },
+                y: {
+                    afterFit: (c) => {
+                            c.width = 40;
+                    }
+                }
+            }
+        }})
 
+    });
 </script>
 
 {% endblock %}
